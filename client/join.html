@@ -1,0 +1,177 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="styles.css" />
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+  </head>
+
+  <body>
+    <div id="joinPrivateRoomContainer" class="join-container">
+      <input
+        id="whatRoom"
+        type="text"
+        placeholder="Input a room code"
+        length="999"
+      />
+      <p class="p">What room do you want to enter?</p>
+      <button id="roomButton">JOIN ROOM!</button>
+    </div>
+
+    <div id="joinPublicQueueContainer" class="join-container">
+      <div class="join-container">
+        <label for="joinMatchmakingButton">OR</label>
+        <button id="joinMatchmakingButton" name="joinMatchmakingButton">
+          Join matchmaking
+        </button>
+      </div>
+    </div>
+
+    <div id="status">
+      <p class="p">Placeholder 9000</p>
+    </div>
+
+    <label for="enterUsernameInput">enter username</label>
+    <input type="text" id="enterUsernameInput" name="enterUsernameInput" />
+    <button type="button" id="enterUsernameButton">submit</button>
+
+    <!--     <form action="/login" method="POST">
+      <label for="usernameInput">Input Username</label>
+      <input
+        type="text"
+        name="usernameInput"
+        id="usernameInput"
+        value=""
+        required
+      />
+      <br />
+      <br />
+      <label for="passwordInput">Input Password</label>
+      <input
+        type="text"
+        name="passwordInput"
+        id="passwordInput"
+        value=""
+        required
+      />
+
+      <input id="loginButton" type="submit" name="loginButton" value="Login" />
+      <br />
+    </form> -->
+
+    <div class="rooms">
+      <h1>ROOM:</h1>
+      <div id="playersInYourRoom"></div>
+    </div>
+  </body>
+
+  <script>
+    //GRABBING SESSION SoTRGE-----------------------------------------
+    let playerId = localStorage.getItem("playerId");
+    if (!playerId) {
+      playerId = `player-${Math.random().toString(36).substr(2, 9)}`;
+      localStorage.setItem("playerId", playerId);
+    }
+
+    const socket = io(window.location.origin, {
+      query: { playerId }, // Send playerId during connection
+    });
+
+    socket.on("player-reconnected", ({ playerId, socketId }) => {
+      console.log(`Player ${playerId} reconnected with socket ${socketId}`);
+    });
+    //GRABBING SESSION SoTRGE-----------------------------------------
+
+    const passwordInput = document.getElementById("whatRoom");
+    const joinPrivate = document.getElementById("roomButton");
+    const status = document.getElementById("status");
+
+    const joinOpen = document.getElementById("joinMatchmakingButton");
+
+    const joinPrivateRoomContainer = document.getElementById(
+      "joinPrivateRoomContainer"
+    );
+    const joinPublicQueueContainer = document.getElementById(
+      "joinPublicQueueContainer"
+    );
+
+    const enterUsernameButton = document.getElementById("enterUsernameButton");
+    const enterUsernameInput = document.getElementById("enterUsernameInput");
+
+    joinOpen.addEventListener("click", () => {
+      const username = enterUsernameInput.value.trim(); //grab the username
+
+      if (username) {
+        sessionStorage.setItem("username", username); // Store username in session storage
+        socket.emit("join-open", { username }); // Send the username
+        joinOpen.disabled = true;
+        joinPublicQueueContainer.style.display = "none";
+      } else {
+        alert("Please enter a username before joining!");
+      }
+    });
+
+    joinPrivate.addEventListener("click", () => {
+      const password = passwordInput.value.trim();
+
+      console.log(password);
+
+      if (password) {
+        socket.emit("join", password);
+        status.textContent = "Searching for a match...";
+      } else {
+        let music = new Audio(
+          "https://cdn.glitch.global/7474aa1e-b304-4cfa-8f14-04000c11e080/LiveAndLearn.mp3?v=1736538833552"
+        );
+        music.play();
+        alert("GIVE ME A PASSWORD NOWWW");
+      }
+    });
+
+    socket.on("waiting-open", () => {
+      //console.log(word )
+      joinPrivateRoomContainer.style.visibility = "hidden";
+
+      status.textContent = "waiting for match...";
+    });
+
+    socket.on("waiting", ({ word }) => {
+      //console.log(word )
+      joinPublicQueueContainer.style.display = "none";
+
+      status.textContent = `Waiting for a match on room code: ${word}...`;
+    });
+    //---------------------------------
+    const playerListDiv = document.getElementById("playersInYourRoom");
+
+    let playersInLobby = [];
+    socket.on("player-joined", ({ players }) => {
+      console.log("bruh");
+      console.log(players);
+
+      playersInLobby = players;
+      playersInLobby.forEach((player, index) => {
+        console.log(`Player ${index + 1}:`, player);
+        //console.log(player.username)
+      });
+
+      // Clear the current content of the player list
+      playerListDiv.innerHTML = "";
+
+      // Append each player's username to the list
+      players.forEach((player) => {
+        const playerItem = document.createElement("div");
+        playerItem.textContent = player.username || player.id; // Display username if available, otherwise fallback to ID
+        playerListDiv.appendChild(playerItem); // Add the player to the list
+      });
+    });
+    //io.in(lobbyId).emit("player-joined", { players: lobby.players })
+
+    //---------------------------------
+    socket.on("game-start", ({ lobbyId }) => {
+      console.log(`Matched to lobby: ${lobbyId}`);
+      localStorage.setItem("roomId", lobbyId); // Store roomId before redirect
+      socket.emit('request-player-list', playersInLobby)
+      window.location.href = `/game.html?room=${lobbyId}`;
+    });
+  </script>
+</html>
