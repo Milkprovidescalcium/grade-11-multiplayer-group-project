@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" href="https://glitch.com/favicon.ico" />
+
+    <title>Multiplayer-test</title>
+    <link rel="stylesheet" href="styles.css" />
+
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <style>
+      .player-list {
+        height: 200px;
+        width: 200px;
+        border: 5px solid red;
+        background-color: white;
+
+        z-index: 999;
+        position: relative;
+        
+        margin:5px;
+      }
+
+      .welcome-message {
+        height: 200px;
+        width: 200px;
+        border: 5px solid red;
+        background-color: white;
+
+        z-index: 999;
+        position: relative;
+        
+        margin:5px;
+      }
+      
+      .player-ui{
+        width:500px;
+        dislay:flex;
+        flex-direction:row;
+      }
+    </style>
+  </head>
+  <body>
+    
+    <div id = "playerUi" class = "player-ui">
+      <div id="welcomeMessage" class="welcome-message"></div>
+      <div id="playerList" class="player-list"></div>
+    </div>
+
+
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/brebruhmap.gif?v=1736968966504"
+      name="gamemap"
+      style=" left: 0px; position: absolute; top: 0px; height=911px; width=1920px;"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/brehbruhbridge.gif?v=1736968590904"
+      name="gamebridge"
+      style=" left: 675px; position: absolute; top: 500px; height=100px; width=175px;"
+    />
+
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/ArrowL.gif?v=1736882164580"
+      name="LeftArrow"
+      class="clickable"
+      style="left: 1170px; position: absolute; top: 625px"
+      onclick="move2_run()"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/ArrowL.gif?v=1736882164580"
+      name="LeftArrow2"
+      class="clickable"
+      style="left: 1610px; position: absolute; top: 510px"
+      onclick="move_run()"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="LeftArrow3"
+      class="clickable"
+      style="left: 1375px; position: absolute; top: 250px"
+      onclick="move3_run()"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="LeftArrow4"
+      class="clickable"
+      style="left: 870px; position: absolute; top: 250px"
+      onclick="move4_run()"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="LeftArrow5"
+      class="clickable"
+      style="left: 500px; position: absolute; top: 225px"
+      onclick="move5_run()"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="LeftArrow6"
+      class="clickable"
+      style="left: 870px; position: absolute; top: 500px"
+      onclick="move6_run()"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="LeftArrow7"
+      class="clickable"
+      style="left: 300px; position: absolute; top: 350px"
+      onclick="move7_run()"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="LeftArrow8"
+      class="clickable"
+      style="left: 325px; position: absolute; top: 250px"
+      onclick="move8_run()"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="LeftArrow9"
+      class="clickable"
+      style="left: 400px; position: absolute; top: 175px"
+      onclick="FinalMove_run()"
+      height="40"
+      width="50"
+    />
+
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/Player.gif?v=1736882196197"
+      name="Player"
+      class="clickable"
+      style="left: 1650px; position: absolute; top: 700px"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="Player2"
+      class="clickable"
+      style="left: 1500px; position: absolute; top: 390px"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="Player3"
+      class="clickable"
+      style="left: 1050px; position: absolute; top: 500px"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="Player4"
+      class="clickable"
+      style="left: 1200px; position: absolute; top: 200px"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="Player5"
+      class="clickable"
+      style="left: 650px; position: absolute; top: 225px"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="Player6"
+      class="clickable"
+      style="left: 400px; position: absolute; top: 225px"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="Player7"
+      class="clickable"
+      style="left: 650px; position: absolute; top: 500px"
+      height="50"
+      width="50"
+    />
+    <img
+      src="https://cdn.glitch.global/1dc9feb7-a25c-4337-aa0f-e966782a30e3/tictacBLANKTPT.gif?v=1736882207879"
+      name="Player8"
+      class="clickable"
+      style="left: 250px; position: absolute; top: 300px"
+      height="50"
+      width="50"
+    />
+
+    <form name="turncheck">
+      <br />
+
+      The current turn number <br />
+      <input type=" text" id="turnnum" name="turnnum" value="1" size="15" />
+      <br />
+      What you used last turn <br />
+      <input type=" text" id="lastmove" name="lastmove" value="" size="15" />
+      <br />
+      <br />
+      Your next move <br />
+      <input type="text" id="whatmove" name="whatmove" value="" size="15" />
+      <br />
+      <br />
+      <br />
+      <br />
+
+      Target:
+      <br />
+      <div name="Enenmy Holder">
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/newslime.gif?v=1737141014355"
+          id="hydro"
+          class="clickable unify"
+          name="hydroblob"
+          onclick="slimeset()"
+        />
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/newimp.gif?v=1737141188999"
+          id="elek"
+          class="clickable unify"
+          name="elektraimp"
+          onclick="impset()"
+        />
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/image%20(2).png?v=1737140663738"
+          id="iceyeti"
+          class="clickable unify"
+          name="yeti"
+          onclick="yetiset()"
+        />
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/newmrflame.gif?v=1737141349964"
+          id="flameknight"
+          class="clickable unify"
+          name="mrflame"
+          onclick="knightset()"
+        />
+      </div>
+      <br />
+
+      What weapon:
+      <br />
+      <div name="Weapon Holder">
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/newice.gif?v=1737141468849"
+          id="icewpn"
+          class="clickable unify"
+          name="icedagger"
+          onclick="daggerset()"
+        />
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/newaqua.gif?v=1737141719164"
+          id="hetwpn"
+          class="clickable unify"
+          name="tideweaver"
+          onclick="swordset()"
+        />
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/newmagma.gif?v=1737141810598"
+          id="hotwpn"
+          class="clickable unify"
+          name="magmastaff"
+          onclick="staffset()"
+        />
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/newthunder.gif?v=1737141877576"
+          id="elekwpn"
+          class="clickable unify"
+          name="thunderspear"
+          onclick="spearset()"
+        />
+      </div>
+
+      <br />
+      What move:
+      <br />
+      <div name="Move Holder">
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/move1.jpg?v=1737485842574"
+          name="pickingone"
+          class="clickable unify"
+          onclick="moveoneset()"
+        />
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/move2.png?v=1737485845420"
+          name="pickingtwo"
+          class="clickable unify"
+          onclick="movetwoset()"
+        />
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/move3.png?v=1737485849885"
+          name="pickingthree"
+          class="clickable unify"
+          onclick="movethreeset()"
+        />
+        <img
+          src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/move4.png?v=1737485854251"
+          name="pickingfour"
+          class="clickable unify"
+          onclick="movefourset()"
+        />
+      </div>
+
+      <br />
+
+      In console info is listed in this order:
+      <br />
+      Weapon
+      <br />
+      Target
+      <br />
+      Move Used
+      <br />
+      Damage dealt
+      <br />
+
+      <img
+        src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/gobruh.jpg?v=1737142734901"
+        id="gobutton"
+        class="clickable"
+        name="gobruh"
+        onclick="damagecalc(settingweapon, pickingurmove, settingtarget)"
+      />
+      <br />
+
+      Transition Testing: swap to battle
+      <br />
+      <img
+        src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/switchingmoment.jpg?v=1737487931066"
+        id="switch"
+        class="clickable"
+        name="switchbruh"
+        onclick="betweentransition()"
+      />
+      <br />
+
+      Transition Testing: swap to map
+      <br />
+      <img
+        src="https://cdn.glitch.global/ee7c8ab9-8a0d-4c13-84b5-b33bd31f0c1e/switchingmomenttwo.jpg?v=1737571346741"
+        id="switchtwo"
+        class="clickable"
+        name="switchbruh"
+        onclick="secondtransition()"
+      />
+      <br />
+
+      <script src="socket-script.js"></script>
+      <script src="script.js"></script>
+    </form>
+  </body>
+</html>
